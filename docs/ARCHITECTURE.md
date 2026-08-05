@@ -52,6 +52,7 @@ Browser / PWA candidate
 
 - local/staging/production Supabase 프로젝트와 비밀정보를 분리한다.
 - `.env.local`은 커밋하지 않고 `.env.example`만 유지한다.
+- Vercel 배포는 `vercel.json`에서 Next.js 프리셋을 고정하고 Output Directory 수동 오버라이드를 해제한다. `public` 정적 배포나 `output: "export"`는 서버 인증 기능과 호환되지 않으므로 사용하지 않는다.
 - CI 게이트: 설치 고정(lockfile), lint, typecheck, unit, build, 핵심 E2E, migration 검증.
 - 운영 전 오류 추적, 감사 로그 보관, PITR/백업 복구 훈련, rate limit을 구성한다.
 

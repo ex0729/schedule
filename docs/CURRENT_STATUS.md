@@ -9,6 +9,7 @@
 - Next.js 16/React 19/TypeScript strict/Tailwind 4 기반 생성.
 - 인증·역할 선택 수직 단위: 가입, 이메일 확인 callback, 로그인, 세션 갱신, 보호 화면, 로그아웃.
 - 가입 입력·역할 검증 단위 테스트와 Supabase 프로필/RLS migration.
+- Vercel Next.js 프레임워크 강제 감지 및 잘못된 `public` Output Directory 오버라이드 해제.
 
 ## 작업 중
 
