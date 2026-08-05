@@ -1,11 +1,13 @@
 import { z } from "zod";
 
-export const USER_ROLES = ["instructor", "company_member"] as const;
+export const SIGN_UP_ROLES = ["instructor", "company_member"] as const;
+export const USER_ROLES = [...SIGN_UP_ROLES, "service_admin"] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
 export const ROLE_LABELS: Record<UserRole, string> = {
   instructor: "강사",
   company_member: "교육회사 담당자",
+  service_admin: "서비스 관리자",
 };
 
 const emailSchema = z
@@ -31,7 +33,7 @@ export const signUpSchema = z.object({
   fullName: z.string().trim().min(2, "이름을 2자 이상 입력해 주세요.").max(50),
   email: emailSchema,
   password: passwordSchema,
-  role: z.enum(USER_ROLES, { error: "역할을 선택해 주세요." }),
+  role: z.enum(SIGN_UP_ROLES, { error: "역할을 선택해 주세요." }),
 });
 
 export type AuthActionState = {

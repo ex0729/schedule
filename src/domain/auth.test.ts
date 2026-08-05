@@ -32,9 +32,19 @@ describe("authentication input", () => {
 });
 
 describe("role metadata", () => {
-  it("allows only product roles", () => {
+  it("recognizes product and service-admin roles", () => {
     expect(roleFromMetadata("company_member")).toBe("company_member");
-    expect(roleFromMetadata("service_admin")).toBeNull();
+    expect(roleFromMetadata("service_admin")).toBe("service_admin");
     expect(roleFromMetadata(undefined)).toBeNull();
+  });
+
+  it("does not allow service-admin self sign-up", () => {
+    const result = signUpSchema.safeParse({
+      fullName: "관리자",
+      email: "admin@example.com",
+      password: "secure1234",
+      role: "service_admin",
+    });
+    expect(result.success).toBe(false);
   });
 });
