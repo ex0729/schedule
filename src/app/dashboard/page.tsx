@@ -1,0 +1,43 @@
+import { redirect } from "next/navigation";
+import { Building2, CalendarDays, GraduationCap, LogOut, ShieldCheck } from "lucide-react";
+import { ROLE_LABELS, roleFromMetadata } from "@/domain/auth";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { signOut } from "@/app/auth/actions";
+
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) redirect("/auth");
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/auth");
+
+  const { data: profile } = await supabase
+    .from("user_profiles")
+    .select("full_name, role")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const role = roleFromMetadata(profile?.role);
+  const fullName = typeof profile?.full_name === "string" ? profile.full_name : "사용자";
+  const isInstructor = role === "instructor";
+
+  return (
+    <main className="dashboard-shell">
+      <header className="dashboard-header">
+        <span className="brand"><span className="brand-mark">C</span><span>ClassLink</span></span>
+        <form action={signOut}><button className="ghost-button" type="submit"><LogOut aria-hidden="true" /> 로그아웃</button></form>
+      </header>
+      <section className="welcome-panel">
+        <div className="role-icon">{isInstructor ? <GraduationCap /> : <Building2 />}</div>
+        <span className="eyebrow">계정 설정 완료</span>
+        <h1>{fullName}님, 환영합니다.</h1>
+        <p>{role ? `${ROLE_LABELS[role]} 작업 공간이 안전하게 준비되었습니다.` : "역할 정보 확인이 필요합니다."}</p>
+        <div className="setup-status">
+          <div><ShieldCheck /><span><strong>인증된 세션</strong>서버에서 사용자 신원을 확인했습니다.</span></div>
+          <div><CalendarDays /><span><strong>다음 단계</strong>{isInstructor ? "회사 연결과 강사 프로필 등록" : "회사 정보와 담당자 프로필 등록"}</span></div>
+        </div>
+        <p className="coming-next">다음 기능은 백로그의 회사·강사 연결 수직 단위에서 제공됩니다.</p>
+      </section>
+    </main>
+  );
+}
